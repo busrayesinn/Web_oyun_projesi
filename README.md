@@ -22,7 +22,7 @@ Bu oyun, **Berb Hike** adlı oyundan esinlenilerek **HTML, CSS ve JavaScript** k
 
 ---
 
-## 🧑‍💻 Kurulum
+## 💻 Kurulum Kurulum
 
 Projeyi çalıştırmak için sadece aşağıdaki adımları izlemeniz yeterlidir:
 
