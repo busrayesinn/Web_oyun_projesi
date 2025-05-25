@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berb Hike</title>
+  <style>
+    canvas {
+      border: 2px solid black;
+      display: block;
+      margin: 0 auto;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #girisEkrani {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f0f8ff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    #girisEkrani h1 {
+      font-size: 48px;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    #girisEkrani button {
+      padding: 15px 30px;
+      font-size: 20px;
+      cursor: pointer;
+      background-color: darkcyan;
+      color: aliceblue;
+      border: none;
+      border-radius: 10px;
+      transition: background-color 0.3s;
+    }
+
+    #girisEkrani button:hover {
+      background-color: blueviolet;
+    }
+</style>
+</head>
+<body>
+  <div id="girisEkrani">
+    <h1>Berb Hike</h1>
+    <button id="baslatButonu">Başla</button>
+  </div>
+  <canvas id="gameCanvas" width="720" height="540"></canvas>
+
+  <img id="karakterYan" src="resimler/karakterYanResim.png" style="display: none;"/>
+  <img id="karakterDuz" src="resimler/karakterDuzResim.png" style="display: none;"/>
+  <img id="yildizResmi" src="resimler/yildiz.png" style="display: none;"/>
+  <img id="engelResmi" src="resimler/agacEngeli.png" style="display: none;"/>
+  
+  <script>
+
+    //engellerin yerlerini temsil eden matris: 1'ler engel var, 0'lar engel yok anlamına gelir
+    const engelKonum = {
+      0: [[0,0,0],
+          [0,0,0],  
+          [0,0,0]],
+          
+      1: [[0,0,0],
+          [0,1,0],
+          [0,0,0]],
+
+      2: [[1,0,0],
+          [0,0,0],  
+          [0,0,1]],
+          
+      3: [[1,0,0],
+          [0,1,0],
+          [0,0,1]],
+
+      4: [[1,0,1],
+          [0,0,0],
+          [1,0,1]],
+
+      5: [[1,0,1],
+          [0,1,0],  
+          [1,0,1]],
+
+      6: [[1,0,1],  
+          [1,0,1],  
+          [1,0,1]],
+
+      S: [[1,0,1], //S, sabit olan 4 engelli karoyu temsil eder
+          [0,0,0],  
+          [1,0,1]],
+      
+      S1: [[0,0,0], //S1, sabit olan 1 engelli karoyu temsil eder
+           [0,1,0],  
+           [0,0,0]]
+    };
+
+    const bolumler = [
+      {
+        harita: [
+          [0,   0,  0,   0],
+          ["S", 4, "S1", 3],
+          [0,   0,  0,   0]
+        ],
+        yildizlar: [
+          [1, 3, 0, 2],
+        ]
+      },
+      {
+        harita: [
+          [1, 1,  1,   1],
+          [1, 1, "S",  1],
+          [3, 1,  1,   1]
+        ],
+        yildizlar: [
+          [0, 0, 0, 0],
+          [0, 3, 0, 2],
+          [1, 1, 1, 2],
+          [2, 0, 2, 0]
+        ]
+      }
+    ];
+    let aktifBolum = 0;
+    let harita = bolumler[aktifBolum].harita;
+    let yildizlar = [...bolumler[aktifBolum].yildizlar]; //yildizlar’i [...] ile kopyalayarak kullandik, cunku dogrudan referans verirsek degisiklik kalici olur.
+
+
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const baslatButonu = document.getElementById("baslatButonu");
+    let oyunBasladiMi = false;
+    let hareketEdiyorMu = null;
+
+    // Ses dosyalari
+    const arkaplanMuzik = new Audio("sesDosyalari/arkaplan.mp3");
+    const yildizSesi = new Audio("sesDosyalari/yildizToplama.mp3");
+
+    //Muzik ayarlari
+    arkaplanMuzik.loop = true;    // Sonsuz dongude calsin
+    arkaplanMuzik.volume = 0.5;   // Ses seviyesi 
+    yildizSesi.volume = 1.0;
+
+    let karakterX = 60; //karakterin X konumunu tutar
+    let karakterY = 240; //karakterin Y konumunu tutar
+    let oncekiKaroSatir = Math.floor(karakterY / 180); //karakterin uzerinden ciktigi karonun satiri
+    let oncekiKaroSutun = Math.floor(karakterX / 180); //karakterin uzerinden ciktigi karonun sutunu
+
+    const hareketBoyutu = 60; //her tus hareketi 60 piksel olacak
+
+    function Cizim(){ 
+      ctx.clearRect(0, 0, canvas.width, canvas.height); //karakter hareket ettikce iz birakmamasi icin canvasi temizleyen fonksiyon
+    
+      //karolari cizdirmek icin for donguleri
+      for(let satir=0; satir<3; satir++){
+        for(let sutun=0; sutun<4; sutun++){
+
+          ctx.strokeStyle="black";
+          ctx.strokeRect(sutun*180, satir*180, 180, 180);
+
+          let karoCesidi=harita[satir][sutun]; //karonun cesidini tutan degisken
+          let engelDeseni=engelKonum[karoCesidi]; //karo cesidine denk gelen desenler bu matriste tutulur 
+          
+          if(karoCesidi !== "S" && karoCesidi !== "S1"){
+            ctx.fillStyle = "#87CEEB";  
+            ctx.fillRect(sutun*180 , satir*180 , 180, 180);
+          }
+
+          if(karoCesidi === "S" || karoCesidi === "S1" ){ //sabit karolar yesil renk
+              ctx.fillStyle="mediumseagreen";  
+              ctx.fillRect(sutun*180 , satir*180 , 180, 180);   
+          }
+        
+          if(karoCesidi === 0){
+            ctx.fillStyle="lightGray";  
+            ctx.fillRect(sutun*180 , satir*180 , 180, 180)
+          }
+          //engelleri cizdirmek icin for donguleri
+          for(let i=0; i<3; i++){
+            for(let j=0; j<3; j++){
+              if(engelDeseni[i][j] === 1){ //deger 1'se engel vardir
+                ctx.drawImage(engelResmi,sutun*180 + j*60, satir*180 + i*60, 60, 60)
+              }
+            }
+          }   
+        }
+      }
+      // yildizlari ciz
+      for (let i = 0; i < yildizlar.length; i++) {
+        const [karoSatir, karoSutun, icSatir, icSutun] = yildizlar[i];
+
+        const x = karoSutun * 180 + icSutun * 60;
+        const y = karoSatir * 180 + icSatir * 60;
+        ctx.drawImage(yildizResmi, x, y, 60, 60);
+      }
+
+      if(hareketEdiyorMu) 
+        ctx.drawImage(karakterDuz, karakterX, karakterY, 60, 60);
+      else 
+        ctx.drawImage(karakterYan, karakterX, karakterY, 60, 60);
+    }
+
+    function muzikBaslat() {
+      arkaplanMuzik.play();
+      document.removeEventListener("keydown", muzikBaslat); // Muzik basladiginda event listener'i kaldir
+    }  
+
+    function engelVarMi(x, y) {
+      // canvas disina cikma kontrolu
+      if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) 
+        return true;
+
+      //floor fonksiyonu en yakın kucuk tam sayiya yuvarlar, boylece karakterin bulundugu karoyu hesaplariz
+      const karoSutun = Math.floor(x / 180);  
+      const karoSatir = Math.floor(y / 180);  
+
+      const icX = Math.floor((y % 180) / 60); // 3x3 ic karoda satir, bulundugu karoda nerede(x konumu)
+      const icY = Math.floor((x % 180) / 60); // 3x3 ic karoda sutun, bulundugu karoda nerede(y konumu)
+
+      const karoCesidi = harita[karoSatir][karoSutun];
+      const engelDeseni = engelKonum[karoCesidi];
+      if (karoCesidi === 0) return true;
+
+      return engelDeseni[icX][icY] === 1; // 1 ise engel vardir
+    }
+
+    function yildizKontrolEt() {
+      const karoSatir = Math.floor(karakterY / 180);
+      const karoSutun = Math.floor(karakterX / 180);
+      const icSatir = Math.floor((karakterY % 180) / 60);
+      const icSutun = Math.floor((karakterX % 180) / 60);
+
+      // mevcut konum ile yildizlari karsilastir
+      for (let i = 0; i < yildizlar.length; i++) {
+        const [ySatir, ySutun, yIcSatir, yIcSutun] = yildizlar[i];
+
+        if (
+          ySatir === karoSatir &&
+          ySutun === karoSutun &&
+          yIcSatir === icSatir &&
+          yIcSutun === icSutun
+        ) {
+          // yildizi topla
+          yildizlar.splice(i, 1); //diziden silinir 
+          yildizSesi.play();
+          break;
+        }
+      }
+
+      if (yildizlar.length === 0) {
+        aktifBolum++;
+        if (aktifBolum < bolumler.length) {
+          harita = bolumler[aktifBolum].harita; // Aktif bolumun harita bilgisini al (engel ve zemin yerlesimi)
+          yildizlar = [...bolumler[aktifBolum].yildizlar]; // Aktif bolumdeki yildizlarin konumlarini kopyala (Orijinal veriyi bozmadan yeni bir liste olusturur)
+          karakterX = 420;
+          karakterY = 240;
+          oncekiKaroSatir = Math.floor(karakterY / 180);
+          oncekiKaroSutun = Math.floor(karakterX / 180);
+          Cizim();
+          alert("Yeni bölüme geçtiniz!");
+        } else {
+          alert("Tebrikler! Tüm bölümleri tamamladınız! 🎉");
+        }
+      }
+    }
+
+    //butona tiklandiysa ses cikar ve oyunbasladi olarak isaretenir, oyun ekrani cizdirilir
+    baslatButonu.addEventListener("click", () => {
+      girisEkrani.style.display = "none";
+      yildizSesi.play();
+      oyunBasladiMi = true;
+      Cizim();
+    })
+
+    //oyuncu tusu biraktiginda calisan fonksiyon
+    document.addEventListener("keyup", (e) => {
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        if (hareketEdiyorMu) clearTimeout(hareketEdiyorMu);
+        // Yeni timeout başlat
+        hareketEdiyorMu = setTimeout(() => {
+        
+        hareketEdiyorMu = false;
+        Cizim();
+        }, 250); // 250 ms gecikme, gorsellerin gecisinin gorulmesi icin
+      }
+    });
+
+    //oyuncu tusa bastiginda calisan fonksiyon
+    document.addEventListener("keydown", function(e) {
+      let yeniX = karakterX; //karakterin gitmek istedigi konumun x koordinati
+      let yeniY = karakterY; //karakterin gitmek istedigi konumun y koordinati
+
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key))
+        hareketEdiyorMu = true;
+    
+
+      if(!oyunBasladiMi)
+        return; //baslat butonuna basilmadan oyunun baslamamasi saglanir
+      
+      //koordinat, basilan tusa gore hareketBoyutu kadar artirilacak/azaltilacak
+      if(e.key === "ArrowRight") yeniX += hareketBoyutu;
+      else if(e.key === "ArrowLeft") yeniX -= hareketBoyutu;
+      else if(e.key === "ArrowUp") yeniY -= hareketBoyutu;
+      else if(e.key === "ArrowDown") yeniY += hareketBoyutu;
+
+      if (!engelVarMi(yeniX, yeniY)) {
+        const yeniSatir = Math.floor(yeniY / 180);
+        const yeniSutun = Math.floor(yeniX / 180);
+
+        // farkli bir karoya gecildiyse engel azalt
+        if (yeniSatir !== oncekiKaroSatir || yeniSutun !== oncekiKaroSutun) {
+          let eskiDeger = harita[oncekiKaroSatir][oncekiKaroSutun];
+          if (typeof eskiDeger === "number" && eskiDeger > 0) {
+            harita[oncekiKaroSatir][oncekiKaroSutun]--;
+          }
+        }
+
+        karakterX = yeniX;
+        karakterY = yeniY;
+
+        oncekiKaroSatir = yeniSatir;
+        oncekiKaroSutun = yeniSutun;
+      
+        yildizKontrolEt();
+        Cizim();
+        muzikBaslat();
+      }
+      
+    });
+    
+  </script>
+</body>
