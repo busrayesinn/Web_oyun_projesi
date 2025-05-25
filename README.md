@@ -3,7 +3,6 @@
 
 Bu oyun, **Berb Hike** adlı oyundan esinlenilerek **HTML, CSS ve JavaScript** kullanılarak geliştirilmiştir. Oyuncunun amacı, yıldızları toplayarak bölümleri tamamlamaktır. Basit, keyifli ve görsel olarak dikkat çekici bir deneyim sunmayı hedefler.
 
-Bu proje, **Web Tabanlı Programlama** dersi kapsamında geliştirilmiştir.
 ---
 
 ## 🎮 Oynanış
