@@ -39,14 +39,14 @@ Projeyi çalıştırmak için sadece aşağıdaki adımları izlemeniz yeterlidi
 ## 🎬 Oynanış Videosu
 
 Oyunun kısa tanıtım videosunu buradan izleyebilirsiniz:  
-📺 [Berb Hike – Oynanış Videosu (YouTube)](https://www.youtube.com/watch?v=VIDEO_ID)
+📺 [Berb Hike – Oynanış Videosu (YouTube)](https://youtu.be/M1uLHmJIFIU?si=GEr4WmquSGuSQAL0)
 
 ---
 
 ## 🔗 Canlı Oyun Linki
 
 Oyunu hemen oynamak için aşağıdaki bağlantıya tıklayın:  
-👉 [Berb Hike – Oyna](https://kullanici-adi.github.io/berb-hike/)
+👉 [Berb Hike – Oyna](https://busrayesinn.github.io/Web_oyun_projesi/)
 
 ---
 
