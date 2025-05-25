@@ -90,11 +90,11 @@ Bu projede kullanılan karakter ve obje görselleri [Freepik.com](https://www.fr
 ## 📸 Ekran Görüntüleri
 
 ### 🖼️ Görsel 1  
-![Görsel 1](./resimler/resim1.png)  
+![Görsel 1](./resimler/Resim1.png)  
 *İkinci bölümden örnek oyun içi görüntü*
 
 ### 🖼️ Görsel 2  
-![Görsel 2](./resimler/resim2.png)  
+![Görsel 2](./resimler/Resim2.png)  
 *Birinci bölümden mavi karolar yok olduğundaki görüntü*
 
 ---
