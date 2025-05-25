@@ -8,7 +8,7 @@ Bu oyun, **Berb Hike** adlı oyundan esinlenilerek **HTML, CSS ve JavaScript** k
 
 * 🟩 **Yeşil Karolar:** Sabit zeminlerdir. Üzerlerinden dilediğiniz kadar geçebilirsiniz.
 * 🟦 **Mavi Karolar:** Değişken zeminlerdir. Üzerinden geçip ayrıldığınızda şekil değiştirir.
-* ⛔ **Engeller:** Mavi karolarda engeller azalır, engeller bitince karo yok olur ve geçilmez hale gelir.
+* ⛔ **Engeller:** Mavi karolarda engeller azalır. Engeller zar yüzeyindeki desenlere benzer şekildedir. Engeller bitince karo yok olur ve geçilmez hale gelir.
 * ⭐ **Yıldızlar:** Tüm yıldızlar toplandığında sonraki bölüme geçilir.
 
 ---
@@ -33,6 +33,20 @@ Projeyi çalıştırmak için sadece aşağıdaki adımları izlemeniz yeterlidi
 ```
 
 > Proje herhangi bir kurulum veya bağımlılık gerektirmez.
+
+---
+
+## 🎬 Oynanış Videosu
+
+Oyunun kısa tanıtım videosunu buradan izleyebilirsiniz:  
+📺 [Berb Hike – Oynanış Videosu (YouTube)](https://www.youtube.com/watch?v=VIDEO_ID)
+
+---
+
+## 🔗 Canlı Oyun Linki
+
+Oyunu hemen oynamak için aşağıdaki bağlantıya tıklayın:  
+👉 [Berb Hike – Oyna](https://kullanici-adi.github.io/berb-hike/)
 
 ---
 
