@@ -1,4 +1,3 @@
-# Web_oyun_projesi
 # ⭐ Berb Hike – Mini Oyun Projesi
 
 Bu oyun, **Berb Hike** adlı oyundan esinlenilerek **HTML, CSS ve JavaScript** kullanılarak geliştirilmiştir. Oyuncunun amacı, yıldızları toplayarak bölümleri tamamlamaktır. Basit, keyifli ve görsel olarak dikkat çekici bir deneyim sunmayı hedefler.
