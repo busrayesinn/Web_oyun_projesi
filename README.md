@@ -87,13 +87,15 @@ Bu projede kullanılan karakter ve obje görselleri [Freepik.com](https://www.fr
 
 ---
 
-## 📸 Ekran Görüntüsü
+## 📸 Ekran Görüntüleri
 
-*(Buraya oyun ekran görüntüsünü ekleyebilirsin)*
+### 🖼️ Görsel 1  
+![Görsel 1](./resimler/resim1.png)  
+*İkinci bölümden örnek oyun içi görüntü*
 
-```md
-![Berb Hike Oyunu](./screenshots/berb-hike.png)
-```
+### 🖼️ Görsel 2  
+![Görsel 2](./resimler/resim2.png)  
+*Birinci bölümden mavi karolar yok olduğundaki görüntü*
 
 ---
 
