@@ -74,7 +74,7 @@ Bu projede kullanılan karakter ve obje görselleri [Freepik.com](https://www.fr
 
 ### 🔊 Ses ve Müzikler
 
-* **🎙️ Anlatım Seslendirmesi:**
+* **🎙️ Anlatım Seslendirmesi:** Örnek oynanış videosunun başındaki anlatım, 
   [TTSMP3.com](https://ttsmp3.com/text-to-speech/Turkish/) üzerinden Türkçe “Filiz” sesi kullanılarak oluşturulmuştur.
 
 * **🎵 Arka Plan Müziği:**
